@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+  
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+      background: #222;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 10px 25px rgba(0,0,0,0.4);
+      width: 320px;
+      max-width: 90%;
+    }
+
+    .display {
+      background: #111;
+      color: #fff;
+      font-size: 2rem;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: right;
+      overflow-x: auto;
+      margin-bottom: 15px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .btn-num { background: #333; color: #fff; }
+    .btn-op { background: #ff9800; color: #fff; }
+    .btn-func { background: #e91e63; color: #fff; }
+    .btn-eq { background: #4caf50; color: #fff; grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="btn-func" onclick="clearAll()">C</button>
+      <button class="btn-func" onclick="clearEntry()">CE</button>
+      <button class="btn-op" onclick="appendOperator('/')">÷</button>
+      <button class="btn-op" onclick="appendOperator('*')">×</button>
+
+      <button class="btn-num" onclick="appendNumber(7)">7</button>
+      <button class="btn-num" onclick="appendNumber(8)">8</button>
+      <button class="btn-num" onclick="appendNumber(9)">9</button>
+      <button class="btn-op" onclick="appendOperator('-')">−</button>
+
+      <button class="btn-num" onclick="appendNumber(4)">4</button>
+      <button class="btn-num" onclick="appendNumber(5)">5</button>
+      <button class="btn-num" onclick="appendNumber(6)">6</button>
+      <button class="btn-op" onclick="appendOperator('+')">+</button>
+
+      <button class="btn-num" onclick="appendNumber(1)">1</button>
+      <button class="btn-num" onclick="appendNumber(2)">2</button>
+      <button class="btn-num" onclick="appendNumber(3)">3</button>
+      <button class="btn-num" onclick="appendDecimal()">.</button>
+
+      <button class="btn-num" onclick="appendNumber(0)">0</button>
+      <button class="btn-eq" onclick="calculateResult()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+    let currentInput = "0";
+
+    function updateDisplay() {
+      display.textContent = currentInput;
+    }
+
+    function appendNumber(num) {
+      if (currentInput === "0" || currentInput === "Error") {
+        currentInput = num.toString();
+      } else {
+        currentInput += num;
+      }
+      updateDisplay();
+    }
+
+    function appendOperator(op) {
+      if (/[\+\-\*\/]$/.test(currentInput)) return; // منع تكرار العلامات
+      currentInput += op;
+      updateDisplay();
+    }
+
+    function appendDecimal() {
+      const parts = currentInput.split(/[\+\-\*\/]/);
+      if (!parts[parts.length - 1].includes(".")) {
+        currentInput += ".";
+        updateDisplay();
+      }
+    }
+
+    function clearAll() {
+      currentInput = "0";
+      updateDisplay();
+    }
+
+    function clearEntry() {
+      currentInput = currentInput.slice(0, -1) || "0";
+      updateDisplay();
+    }
+
+    function calculateResult() {
+      try {
+        let result = eval(currentInput);
+        if (!isFinite(result)) throw "Error";
+        currentInput = parseFloat(result.toFixed(10)).toString();
+      } catch {
+        currentInput = "Error";
+      }
+      updateDisplay();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (!isNaN(e.key)) appendNumber(e.key);
+      if (["+", "-", "*", "/"].includes(e.key)) appendOperator(e.key);
+      if (e.key === ".") appendDecimal();
+      if (e.key === "Enter") calculateResult();
+      if (e.key === "Backspace") clearEntry();
+      if (e.key === "Escape") clearAll();
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>
+
